@@ -61,7 +61,9 @@
       My goal is to leave you with a concrete understanding of the ideas I mention, and to keep it
       accessible I may gloss over some gory details. But for the interested reader, I have added
       drop downs wherever you may want some more clarity. This way, I hope to cater to a larger
-      audience.
+      audience. For those interested in getting more hands on, I have also attached
+      <a href="https://colab.research.google.com/drive/1bH4DIJviuIdGpojL_i6A6577_eKAZivD?usp=sharing">a piece of code</a> 
+      to explicitly understand what's going on.
     </p>
 
     <p>
@@ -341,8 +343,19 @@
       (since \(\phi_n(0) = \delta_{n0}\)) and, as time goes on, spreads outward along the chain
       according to how large the Lanczos coefficients \(b_n\) are. All the complicated dynamics of
       \(\mathcal{L}\) has been repackaged into this one sequence of numbers, \(\{b_n\}\). To
-      visualize this, check out the Jupyter notebook attached!
+      visualize this, check out the animation below!
     </p>
+
+    <figure class="post-video">
+    <video controls muted loop playsinline>
+    <source src="../media/hopping_animation.mp4" type="video/mp4">
+      Your browser doesn't support embedded video. 
+      <a href="../media/hopping_animation.mp4">Download the video</a> instead.
+    </video>
+    <figcaption>
+      The probability \(|\phi_n(t)|^2\) of the hopping particle spreading across Krylov sites over time.
+    </figcaption>
+    </figure>
 
     <p>
       Because time evolution is unitary, the norm of \(O(t)\) is preserved, so
