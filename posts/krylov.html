@@ -191,7 +191,7 @@
 
     <div class="proof" id="proof-orthonormality">
       <div class="proof-inner"><div class="proof-content">
-        <div class="proof-label">Checking orthogonality of the first two vectors <span class="close" data-close="orthonormality">close ✕</span></div>
+        <div class="proof-label">Checking orthonormality<span class="close" data-close="orthonormality">close ✕</span></div>
         <p>
           \((O|\mathcal{L}O) = (O|[H,O]) = (O|HO) - (O|OH) = \frac{1}{d}[\mathrm{Tr} (O^\dagger HO) - \mathrm{Tr} (O^\dagger OH)] = \frac{1}{d}[\mathrm{Tr} (O^2 H) - \mathrm{Tr} (O^2 H)] = 0\),
           where we have used the fact that \(O\) is an observable, and thus Hermitian. Wait! Did we
@@ -372,11 +372,11 @@
       \(n\), and \(K(t)\) tracks the drift from one to the other. Such an object has turned out to
       be a very useful diagnostic of the dynamics of the underlying problem. Particularly for
       chaotic dynamics in \(d>1\), \(b_n \sim \alpha n\) and \(K(t) \sim \mathrm{e}^{2 \alpha t}\).
-      Indeed, this is indicative of how strongly scrambling chaotic dynamics can get.
+      Indeed, this is indicative of how strongly complex chaotic dynamics can get.
     </p>
 
     <p>
-      As we come close to the end of this piece, let's quickly recap what we have seen till now. We
+      As we come close to the end of this piece, let's quickly recap what we have seen. We
       began by solving the Heisenberg equation of motion for an observable and saw that we could
       express the solution as a linear combination of non-orthonormal operators that look like
       \(\{O,\ \mathcal{L}O,\ \mathcal{L}^2O, ...\}\). We then orthonormalized this set to obtain the
@@ -392,7 +392,7 @@
     <p>
       Krylov methods in quantum dynamics bring deeper understanding beyond the standard paradigm of
       analysis techniques. In the case of quantum chaos, it adds onto the list of other diagnostics
-      such as the Spectral Form Factor and Random Matrix Theory spectra. With its much more recent
+      such as plotting the Spectral Form Factor or looking at spectra to compare against Random Matrix Theory. With its much more recent
       extension to analyzing open quantum systems, it has only become a much more powerful tool.
       Some recent work also explores Krylov complexity in the context of holography, but honestly I
       don't understand it (yet!).
