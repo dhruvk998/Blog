@@ -58,12 +58,19 @@
     </p>
 
     <p>
+      My goal is to leave you with a concrete understanding of the ideas I mention, and to keep it
+      accessible I may gloss over some gory details. But for the interested reader, I have added
+      drop downs wherever you may want some more clarity. This way, I hope to cater to a larger
+      audience.
+    </p>
+
+    <p>
       Schrödinger's equation states \(i \partial_t |\psi \rangle=\hat{H}|\psi \rangle\) and is the
       governing equation for the evolution of quantum states \(|\psi \rangle\) under a Hamiltonian
       \(\hat{H}\). For a time independent Hamiltonian, the solutions can be formally written as
       \(|\psi(t)\rangle=\hat{U}|\psi(0)\rangle\) where \(\hat{U}= \exp(-i\hat{H}t)\). Furthermore,
-      the expectation value of any observable \(\hat{O}\)
-      <span class="thm" data-proof="heisenberg-picture">varies with time, and this naturally brings us to the Heisenberg picture</span><span class="thm-marker">▸</span>,
+      the expectation value of any observable \(\hat{O}\) varies with time, and this naturally brings us to the
+      <span class="thm" data-proof="heisenberg-picture">Heisenberg picture</span><span class="thm-marker">▸</span>,
       where we fix the states and evolve the operators in time instead. Both methods yield the same
       answers, but it may be helpful to sometimes work in the Heisenberg picture. In this article, we
       will find it to be immensely useful.
@@ -89,12 +96,6 @@
       </div></div>
     </div>
 
-    <p>
-      My goal is to leave you with a concrete understanding of the ideas I mention, and to keep it
-      accessible I may gloss over some gory details. But for the interested reader, I have added
-      drop downs wherever you may want some more clarity. This way, I hope to cater to a larger
-      audience.
-    </p>
 
     <h2>Vectorization</h2>
 
@@ -184,9 +185,8 @@
 
     <p>
       What can we deduce about this basis? Is it orthogonal or normalized? It can be shown that it
-      is neither, and therefore maybe we can do better. Recall that the oldest trick in the book to
-      orthonormalize a basis is to use the celebrated
-      <span class="thm" data-proof="orthonormality">Gram-Schmidt procedure</span><span class="thm-marker">▸</span>.
+      is <span class="thm" data-proof="orthonormality">neither</span><span class="thm-marker">▸</span>, and therefore maybe we can do better. Recall that the oldest trick in the book to
+      orthonormalize a basis is to use the celebrated Gram-Schmidt procedure.
     </p>
 
     <div class="proof" id="proof-orthonormality">
