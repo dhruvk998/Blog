@@ -10,10 +10,33 @@
       tex: {
         inlineMath: [['$', '$']],
         displayMath: [['\\[', '\\]']]
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      options: {
+        // re-typeset is triggered manually below when a drop-down opens,
+        // so MathJax never has to measure equations while they're hidden
+        enableMenu: false
       }
     };
   </script>
-  <script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+  <script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>
+  <style>
+    /* Keep MathJax's own output from fighting the site's CSS */
+    mjx-container[jax="SVG"][display="true"] {
+      display: block !important;
+      margin: 1em auto !important;
+      text-align: center !important;
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+    }
+    mjx-container[jax="SVG"]:not([display="true"]) {
+      display: inline-block !important;
+      margin: 0 2px !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -261,5 +284,28 @@
 </footer>
 
 <script src="../proofs.js"></script>
+<script>
+  // Any time a .proof block's visibility is toggled (however proofs.js does it —
+  // display, class, max-height, etc.), ask MathJax to re-typeset. Equations that
+  // were measured while hidden can render with zero width / broken matrices,
+  // so this guarantees they get laid out correctly once actually visible.
+  document.addEventListener('DOMContentLoaded', function () {
+    var retypeset = function () {
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise();
+      }
+    };
+    var observer = new MutationObserver(retypeset);
+    document.querySelectorAll('.proof').forEach(function (el) {
+      observer.observe(el, { attributes: true, attributeFilter: ['style', 'class'] });
+    });
+    // Fallback: also catch clicks on the triggers/close buttons directly
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('.thm-marker, .thm, .close')) {
+        setTimeout(retypeset, 50);
+      }
+    });
+  });
+</script>
 </body>
 </html>
