@@ -3,18 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Krylov Complexity</title>
+  <title>Krylov Complexity </title>
   <link rel="stylesheet" href="../style.css">
-  <script>
-    MathJax = {
-      tex: {
-        inlineMath: [['\\(', '\\)']],
-        displayMath: [['\\[', '\\]']]
-      },
-      svg: { fontCache: 'global' }
-    };
-  </script>
-  <script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
 
@@ -36,367 +26,128 @@
     <h1>Krylov Complexity</h1>
     <p class="post-meta">
       <span>June 2026</span>
-      <span>12 min read</span>
+      <span>10 min read</span>
     </p>
   </header>
 
+  <!-- ════════════════════════════════════════════
+       POST BODY
+
+       HOW TO ADD AN EXPANDABLE PROOF:
+       ─────────────────────────────────────────
+       1. Wrap the term/theorem in your prose with:
+              <span class="thm" data-proof="UNIQUE-ID">your term</span><span class="thm-marker">▸</span>
+
+       2. Immediately after the paragraph, add the proof block:
+              <div class="proof" id="proof-UNIQUE-ID">
+                <div class="proof-inner"><div class="proof-content">
+                  <div class="proof-label">Label <span class="close" data-close="UNIQUE-ID">close ✕</span></div>
+                  <p>Your explanation...</p>
+                </div></div>
+              </div>
+
+       Use the same UNIQUE-ID in both places. That's it!
+  ════════════════════════════════════════════ -->
   <article class="post-body">
 
-    <h2>Background</h2>
-
     <p>
-      How do quantum operators grow? If you evolve an operator in time through a Hamiltonian,
-      one is often interested in characterizing how <em>complex</em> this evolution is. Are there
-      any patterns of growth we can find? Quantum dynamics, with its vast richness, has recently
-      benefitted from adopting a rather old perspective on matrices and linear algebra, dating back
-      to the 1930s. In this article, I seek to elucidate the so-called <em>Krylov subspace methods</em>
-      in the context of quantum mechanics. We will see that these techniques allow us to quantify the
-      <em>Krylov complexity</em> of the evolution of an operator. With wide applications in fields
-      ranging from open quantum systems to holography, Krylov complexity has found to provide deep
-      insights and shows consistent universality across all regimes of dynamics, from the integrable
-      to the completely chaotic.
+      A mass on a spring. A pendulum. An LC circuit. On the surface these look nothing alike —
+      yet they are all described by the same equation.
+      <span class="thm" data-proof="shm-eq">The equation of simple harmonic motion is
+      <em>ẍ + ω²x = 0</em></span><span class="thm-marker">▸</span>,
+      and understanding why it keeps reappearing is one of the great unifying insights of classical physics.
     </p>
 
-    <p>
-      Schrödinger's equation states \(i \partial_t |\psi \rangle=\hat{H}|\psi \rangle\) and is the
-      governing equation for the evolution of quantum states \(|\psi \rangle\) under a Hamiltonian
-      \(\hat{H}\). For a time independent Hamiltonian, the solutions can be formally written as
-      \(|\psi(t)\rangle=\hat{U}|\psi(0)\rangle\) where \(\hat{U}= \exp(-i\hat{H}t)\). Furthermore,
-      the expectation value of any observable \(\hat{O}\)
-      <span class="thm" data-proof="heisenberg-picture">varies with time, and this naturally brings us to the Heisenberg picture</span><span class="thm-marker">▸</span>,
-      where we fix the states and evolve the operators in time instead. Both methods yield the same
-      answers, but it may be helpful to sometimes work in the Heisenberg picture. In this article, we
-      will find it to be immensely useful.
-    </p>
-
-    <div class="proof" id="proof-heisenberg-picture">
+    <div class="proof" id="proof-shm-eq">
       <div class="proof-inner"><div class="proof-content">
-        <div class="proof-label">From Schrödinger to Heisenberg <span class="close" data-close="heisenberg-picture">close ✕</span></div>
-        <p>
-          The expectation value of any observable \(\hat{O}\) varies with time and is given as
-        </p>
-        \[
-        \langle\psi(t)|\hat{O}|\psi(t)\rangle=\langle\psi(0)| e^{i\hat{H}t} \hat{O} e^{-i\hat{H}t}|\psi(0)\rangle \equiv \langle\psi(0)|\hat{O}(t)|\psi(0)\rangle.
-        \]
-        <p>
-          The last equivalence brings us to the <em>Heisenberg picture</em>, where we fix the states
-          and evolve the operators in time as
-        </p>
-        \[
-        \hat{O}(t)=e^{i\hat{H}t} \hat{O} e^{-i\hat{H}t}
-        \]
-        <p>instead.</p>
+        <div class="proof-label">Where does this ODE come from? <span class="close" data-close="shm-eq">close ✕</span></div>
+        <p>Start with a mass <em>m</em> on a spring with spring constant <em>k</em>.
+        Hooke's law says the restoring force is proportional to displacement: <code>F = −kx</code>.
+        Newton's second law gives <code>F = mẍ</code>. Combining:</p>
+        <pre>mẍ = −kx   ⟹   ẍ + (k/m)x = 0</pre>
+        <p>We define <code>ω² = k/m</code>, giving <code>ẍ + ω²x = 0</code>.
+        This is a linear, second-order ODE with constant coefficients.
+        Its characteristic equation is <code>r² + ω² = 0</code>, with roots <code>r = ±iω</code>.
+        By Euler's formula, the general solution is:</p>
+        <pre>x(t) = A cos(ωt) + B sin(ωt)</pre>
+        <p>where <em>A</em> and <em>B</em> are set by initial conditions (starting position and velocity).</p>
       </div></div>
     </div>
 
-    <p>
-      My goal is to leave you with a concrete understanding of the ideas I mention, and to keep it
-      accessible I may gloss over some gory details. But for the interested reader, I have added
-      drop downs wherever you may want some more clarity. This way, I hope to cater to a larger
-      audience.
-    </p>
-
-    <h2>Vectorization</h2>
+    <h2>The frequency doesn't depend on amplitude</h2>
 
     <p>
-      Before we begin, I just want to give a heads up on the idea of
-      <span class="thm" data-proof="vectorization">vectorization</span><span class="thm-marker">▸</span>,
-      which will be central to our discussion. As mentioned, those familiar with it may skip ahead,
-      noting that I would be using the row-vectorization convention.
+      Perhaps the strangest feature of SHM is that if you pull the spring twice as far,
+      the oscillation takes exactly the same time. This <em>isochrony</em> is not obvious —
+      a longer pull means more force, but also more distance to cover.
+      <span class="thm" data-proof="isochrony">These two effects cancel exactly</span><span class="thm-marker">▸</span>,
+      and the period <em>T = 2π/ω</em> is independent of amplitude.
     </p>
 
-    <div class="proof" id="proof-vectorization">
+    <div class="proof" id="proof-isochrony">
       <div class="proof-inner"><div class="proof-content">
-        <div class="proof-label">Vectorizing operators <span class="close" data-close="vectorization">close ✕</span></div>
-        <p>
-          As the name suggests, we are often interested in "vectorizing" operators so that we may
-          treat them as vectors. Similarly, vectorization pulls down the status of a superoperator
-          (or a channel) to an operator. The way this bijection is established is by defining the
-          identification as follows. Let \(A\) be an operator and \(\mathrm{vec}(A)\) be its
-          vectorization.
-        </p>
-        \[
-        A = \sum A_{ij} |i\rangle \langle j| \longleftrightarrow \mathrm{vec}(A) =  \sum A_{ij} |i\rangle |j\rangle^*
-        \]
-        <p>
-          The reason this convention is called row-vectorization is because it stacks the rows
-          first. As an example:
-        </p>
-        \[
-        \begin{pmatrix}
-        1 & 2\\
-        3 & 4
-        \end{pmatrix}
-        \;\longleftrightarrow\;
-        \begin{pmatrix}
-        1 & 2 & 3 & 4
-        \end{pmatrix}
-        \]
-        <p>
-          Denote the normalized vector as \(|A) = \frac{1}{\sqrt{d}} \mathrm{vec}(A)\), where
-          \(d= \mathrm{Tr}\ I\), the dimension of the Hilbert space. A number of simple to prove
-          identities follow, two of which are:
-        </p>
-        \[
-        (A | B) = \frac{1}{d} \mathrm{vec}(A)^\dagger \mathrm{vec}(B)= \frac{1}{d}\mathrm{Tr}(A^\dagger B)
-        \]
-        \[
-        \mathrm{vec}(A O B) = (A \otimes B^T) (\mathrm{vec}(O))
-        \]
-        <p>
-          The usual Frobenius norm of a matrix is then given as
-          \(||A||_F = \sqrt{(A|A)} = \sum _{ij} \sqrt {|A_{ij}|^2}\).
-        </p>
+        <div class="proof-label">Why amplitude cancels out <span class="close" data-close="isochrony">close ✕</span></div>
+        <p>Write the solution as <code>x(t) = A cos(ωt + φ)</code> for amplitude <em>A</em> and phase <em>φ</em>.
+        Substituting into <code>ẍ + ω²x = 0</code>:</p>
+        <pre>ẍ = −Aω² cos(ωt + φ) = −ω² · x(t)  ✓</pre>
+        <p>The amplitude <em>A</em> appears on both sides and cancels. The equation is satisfied for
+        <em>any</em> value of <em>A</em>. The angular frequency <code>ω = √(k/m)</code> depends only
+        on the physical properties of the spring and mass — not on how hard you push.</p>
+        <p>Contrast this with nonlinear oscillators (like a pendulum at large angles), where
+        the restoring force is no longer proportional to displacement and isochrony breaks down.</p>
       </div></div>
     </div>
 
-    <h2>Krylov Subspace</h2>
+    <h2>The pendulum as an approximation</h2>
 
     <p>
-      Onto the interesting stuff! Recall the Heisenberg equation of motion for an observable \(O\)
-    </p>
-    \[
-    \frac{\partial O}{\partial t} = i[H, O]
-    \]
-    <p>
-      Define the <em>Liouvillian</em> superoperator \(\mathcal{L}\) that acts on operators as
-      \(\mathcal{L}(.) = [H,.]\). Then we may rewrite the preceding equation as
-    </p>
-    \[
-    \frac{\partial O}{\partial t} = i\mathcal{L}O
-    \]
-    <p>
-      In case of a time-independent Hamiltonian, the above equation may be formally solved to
-      obtain (using the BCH formula)
-    </p>
-    \[
-    O(t) = \mathrm{e}^{iHt} O \mathrm{e}^{-iHt} = O\ +\ it[H,O]\ +\ \frac{(it)^2}{2}[H,[H,O]]\ +\ ...\ = O\ +\ it \mathcal{L}O\ +\ \frac{(it)^2}{2} \mathcal{L}^2O\ +\ ...
-    \]
-    <p>or, more succinctly,</p>
-    \[
-    O(t) = \mathrm{e}^{it \mathcal{L}} O
-    \]
-    <p>
-      What does this tell us? At \(t=0\), \(O(t) = O\), but as time passes the contributions due to
-      \(\mathcal{L}O\), \(\mathcal{L}^2O\), ... add up too. The operator explores this "Krylov"
-      subspace spanned by \(\{O,\ \mathcal{L}O,\ \mathcal{L}^2O, ...\}\).
+      A pendulum of length <em>L</em> obeys <em>θ̈ + (g/L) sin θ = 0</em> — not quite SHM.
+      But for small angles,
+      <span class="thm" data-proof="small-angle">sin θ ≈ θ</span><span class="thm-marker">▸</span>,
+      linearising the equation to <em>θ̈ + (g/L)θ = 0</em>. So the pendulum becomes
+      a simple harmonic oscillator with <em>ω = √(g/L)</em>.
     </p>
 
-    <p>
-      What can we deduce about this basis? Is it orthogonal or normalized? It can be shown that it
-      is neither, and therefore maybe we can do better. Recall that the oldest trick in the book to
-      orthonormalize a basis is to use the celebrated
-      <span class="thm" data-proof="orthonormality">Gram-Schmidt procedure</span><span class="thm-marker">▸</span>.
-    </p>
-
-    <div class="proof" id="proof-orthonormality">
+    <div class="proof" id="proof-small-angle">
       <div class="proof-inner"><div class="proof-content">
-        <div class="proof-label">Checking orthogonality of the first two vectors <span class="close" data-close="orthonormality">close ✕</span></div>
-        <p>
-          \((O|\mathcal{L}O) = (O|[H,O]) = (O|HO) - (O|OH) = \frac{1}{d}[\mathrm{Tr} (O^\dagger HO) - \mathrm{Tr} (O^\dagger OH)] = \frac{1}{d}[\mathrm{Tr} (O^2 H) - \mathrm{Tr} (O^2 H)] = 0\),
-          where we have used the fact that \(O\) is an observable, and thus Hermitian. Wait! Did we
-          not just prove orthogonality? Well not exactly, because for the entire basis to be
-          orthogonal we would need \((O|\mathcal{L}^2O)\) to vanish as well. Check for yourself that
-          this is indeed not the case!
-        </p>
+        <div class="proof-label">The small-angle approximation <span class="close" data-close="small-angle">close ✕</span></div>
+        <p>The Taylor series of sin θ around θ = 0 is:</p>
+        <pre>sin θ = θ − θ³/6 + θ⁵/120 − ···</pre>
+        <p>For small θ (say under 15°, which is about 0.26 rad), the cubic term contributes
+        less than <code>0.26³/6 ÷ 0.26 ≈ 1%</code> of the leading term. Dropping it:
+        <code>sin θ ≈ θ</code>. The error stays below 1% for angles up to about 14°.</p>
+        <p>The approximation fails at large angles, and the period of a real pendulum grows
+        as amplitude increases — you can measure this with a careful experiment.</p>
       </div></div>
     </div>
 
-    <h2>Lanczos Algorithm</h2>
+    <h2>Energy: an ellipse in phase space</h2>
 
     <p>
-      Note that the Liouvillian is Hermitian with respect to the inner product we have been using,
-      i.e. \((A| \mathcal{L} B) = (\mathcal{L} A| B)\), or in vectorized notation
-      \(\mathcal{L} = \mathcal{L}^\dagger\).
+      At any instant, the total energy is the sum of kinetic and potential:
+      <span class="thm" data-proof="energy">E = ½mv² + ½kx²</span><span class="thm-marker">▸</span>.
+      This is conserved throughout the motion. In the phase plane — the space of
+      <em>(x, v)</em> pairs — the trajectory is an ellipse, and the ellipse is closed
+      precisely because energy is constant.
     </p>
 
-    <p>
-      This is a rather nice property to have, because it means we can use \(\mathcal{L}\) to build
-      ourselves a proper orthonormal basis out of the messy set \(\{O, \mathcal{L}O, \mathcal{L}^2O, ...\}\),
-      using essentially the same Gram-Schmidt idea I hinted at earlier. This particular flavour of
-      Gram-Schmidt, tailored to the Liouvillian, has its own name: the <em>Lanczos algorithm</em>.
-      Here's how it goes. Set \(|O_{-1}) := 0\) and \(b_0 := 0\) as bookkeeping conventions, and take
-      \(|O_0) := |O)\) to be our (normalized, Hermitian) starting operator. Then construct the
-      following:
-    </p>
-    \[
-    |A_1) = \mathcal{L}|O_0), \qquad b_1 = \| A_1 \|, \qquad |O_1) = |A_1)/b_1,
-    \]
-    <p>and for every subsequent step \(n>1\),</p>
-    \[
-    |A_n) = \mathcal{L}|O_{n-1}) - b_{n-1}|O_{n-2}), \qquad b_n = \|A_n\|, \qquad |O_n) = |A_n)/b_n.
-    \]
-    <p>
-      Notice the recipe: apply \(\mathcal{L}\), subtract off the piece along the previous basis
-      vector, and normalize. At each step you only ever need to subtract off the immediately
-      preceding vector, not the entire history, which is a nice simplification compared to a
-      generic Gram-Schmidt procedure and is really a
-      <span class="thm" data-proof="tridiagonal">consequence of \(\mathcal{L}\) being Hermitian</span><span class="thm-marker">▸</span>.
-    </p>
-
-    <div class="proof" id="proof-tridiagonal">
+    <div class="proof" id="proof-energy">
       <div class="proof-inner"><div class="proof-content">
-        <div class="proof-label">Why the recursion only reaches back one step <span class="close" data-close="tridiagonal">close ✕</span></div>
-        <p>
-          This follows from \(\mathcal{L} = \mathcal{L}^\dagger\). Suppose we've built
-          \(\{|O_0), ..., |O_{n-1})\}\) orthonormally. Consider \((O_m|\mathcal{L}|O_{n-1})\) for
-          some \(m < n-2\). By Hermiticity this equals \((\mathcal{L}O_m|O_{n-1})\), and
-          \(\mathcal{L}O_m\) is by construction a combination of \(\{|O_0), ..., |O_{m+1})\}\) only,
-          all of which are orthogonal to \(|O_{n-1})\) since \(m+1 < n-1\). Hence
-          \((O_m|\mathcal{L}|O_{n-1}) = 0\) whenever \(|m - (n-1)| > 1\), and the only surviving
-          overlaps of \(\mathcal{L}|O_{n-1})\) are along \(|O_{n-2})\), \(|O_{n-1})\), and \(|O_n)\).
-          The diagonal piece \((O_{n-1}|\mathcal{L}|O_{n-1})\) vanishes too, by the same Hermiticity
-          argument we used earlier to show \((O|\mathcal{L}O) = 0\). That's why the recursion in
-          step 4 only needs to subtract the previous vector, and it's also why, once you write out
-          the matrix elements \((O_m|\mathcal{L}|O_n)\), you get something tridiagonal, all zeros
-          except for the \(b_n\)'s sitting just off the main diagonal.
-        </p>
+        <div class="proof-label">Proving energy conservation <span class="close" data-close="energy">close ✕</span></div>
+        <p>Differentiate <code>E = ½mv² + ½kx²</code> with respect to time, using
+        <code>v = ẋ</code> and <code>dv/dt = ẍ</code>:</p>
+        <pre>dE/dt = mv·ẍ + kx·ẋ = ẋ(mẍ + kx)</pre>
+        <p>The equation of motion tells us <code>mẍ + kx = 0</code>, so:</p>
+        <pre>dE/dt = ẋ · 0 = 0</pre>
+        <p>Energy is exactly constant. Substituting the solution <code>x = A cos(ωt)</code>
+        and <code>v = −Aω sin(ωt)</code>:</p>
+        <pre>E = ½m(Aω)²sin²(ωt) + ½kA²cos²(ωt)
+  = ½kA²(sin²(ωt) + cos²(ωt))   [since mω² = k]
+  = ½kA²</pre>
+        <p>So the total energy is <code>½kA²</code> — proportional to the square of amplitude,
+        and independent of time.</p>
       </div></div>
     </div>
-
-    <p>
-      This process can't go on forever. It stops once you hit some \(n = D_K\) for which
-      \(\|A_n\| = 0\), meaning \(\mathcal{L}|O_{n-1})\) has nothing new left to offer, it's already
-      fully expressible in terms of the basis you've built so far. This \(D_K\) is called the
-      <em>Krylov dimension</em>, and the resulting ordered set \(\{|O_0), |O_1), ..., |O_{D_K - 1})\}\)
-      is the <em>Krylov basis</em>. Also, purely as a word of caution if you ever try to code this
-      up: the algorithm is numerically finicky. Rounding errors creep in and orthogonality degrades
-      after a surprisingly small number of steps, so in practice people lean on reorthogonalization
-      tricks to keep things honest. This changes the algorithm quite a bit, but for a first
-      introduction this discussion is sufficient. See the Jupyter notebook attached to see what I
-      mean!
-    </p>
-
-    <p>
-      How big can \(D_K\) get? Since the Krylov space lives inside the full operator space, which
-      has dimension \(d^2\), you'd think \(D_K \leq d^2\). It turns out you can do a little better:
-      \(D_K\) may be bounded as \(1 \le D_K \le d^2 - d + 1\). Chaotic systems tend to typically
-      saturate this bound, but note that integrable systems could too. The value of \(D_K\) alone
-      doesn't cleanly distinguish chaos from integrability.
-    </p>
-
-    <p>
-      Once you have the basis, the whole point was to write \(\mathcal{L}\) compactly. Sandwiching
-      the recursion relation between basis vectors, you find
-    </p>
-    \[
-    \mathcal{L}|O_n) = b_n |O_{n-1}) + b_{n+1}|O_{n+1}),
-    \]
-    <p>
-      which says that \(\mathcal{L}\), in the Krylov basis, is a tridiagonal matrix, with the
-      \(b_n\)'s as its only nonzero entries. So it looks something like
-    </p>
-    \[
-    \mathcal{L} =
-    \begin{pmatrix}
-    0      & b_{1} & 0      & \cdots & 0 \\
-    b_{1}  & 0     & b_{2}  & \ddots & \vdots \\
-    0      & b_{2} & 0      & \ddots & 0 \\
-    \vdots & \ddots& \ddots & \ddots & b_{D_K-1} \\
-    0      & \cdots& 0      & b_{D_K-1} & 0
-    \end{pmatrix}.
-    \]
-
-    <p>
-      Note that in the more general case when \(O\) is not Hermitian, this matrix has diagonal
-      entries too. So we now have a sparse and clean matrix representation of the Liouvillian. But
-      things can get more interesting...
-    </p>
-
-    <h2>The Hopping Problem</h2>
-
-    <p>
-      Here's where things get fun. Since \(\{|O_n)\}\) is a basis, we can expand the full
-      time-evolved operator in it. Writing \(|O(t)) = \sum_n i^n \phi_n(t) |O_n)\) (the factors of
-      \(i^n\) are there just to keep the \(\phi_n\)'s real, since \(O(t)\) is Hermitian while
-      \(|O_n)\) generally isn't), and plugging into \(\partial_t |O(t)) = i\mathcal{L}|O(t))\) along
-      with the tridiagonal form of \(\mathcal{L}\) above, you get a neat
-      <span class="thm" data-proof="hopping-eq">difference-differential equation</span><span class="thm-marker">▸</span>:
-    </p>
-    \[
-    \dot\phi_n(t) = b_n \phi_{n-1}(t) - b_{n+1}\phi_{n+1}(t),
-    \]
-    <p>with \(\phi_{-1}(t) = 0\) and \(\phi_n(0) = \delta_{n0}\).</p>
-
-    <div class="proof" id="proof-hopping-eq">
-      <div class="proof-inner"><div class="proof-content">
-        <div class="proof-label">Deriving the hopping equation <span class="close" data-close="hopping-eq">close ✕</span></div>
-        <p>
-          To see where this comes from, start from \(\partial_t|O(t)) = i\mathcal{L}|O(t))\) and
-          expand both sides in the Krylov basis. The left side gives
-          \(\sum_n i^n \dot\phi_n(t)|O_n)\). For the right side, use
-          \(|O(t)) = \sum_m i^m \phi_m(t)|O_m)\) and apply
-          \(\mathcal{L}|O_m) = b_m|O_{m-1}) + b_{m+1}|O_{m+1})\) term by term, then relabel the sum
-          so everything is collected against \(|O_n)\). Matching coefficients of \(|O_n)\) on both
-          sides and cancelling the common factor of \(i^n\) gives exactly the stated recursion.
-        </p>
-      </div></div>
-    </div>
-
-    <p>
-      What this equation is really telling you is that the messy many-body operator growth problem
-      has been mapped onto something quite simple: a single particle hopping along a 1D chain,
-      where site \(n\) represents the Krylov basis vector \(|O_n)\), and \(b_n\), \(b_{n+1}\) are
-      the hopping rates to the left and right neighbours. The particle starts pinned at site \(0\)
-      (since \(\phi_n(0) = \delta_{n0}\)) and, as time goes on, spreads outward along the chain
-      according to how large the Lanczos coefficients \(b_n\) are. All the complicated dynamics of
-      \(\mathcal{L}\) has been repackaged into this one sequence of numbers, \(\{b_n\}\). To
-      visualize this, check out the Jupyter notebook attached!
-    </p>
-
-    <p>
-      Because time evolution is unitary, the norm of \(O(t)\) is preserved, so
-      \(\sum_n |\phi_n(t)|^2 = 1\) for all \(t\). This lets you read \(|\phi_n(t)|^2\) as a genuine
-      probability, the probability of finding your hopping particle at site \(n\) at time \(t\), or
-      equivalently, of the operator's growth having reached "distance" \(n\) into the Krylov chain.
-      Well if this is a probability distribution, maybe looking at its moments could be insightful.
-    </p>
-
-    <h2>Krylov Complexity</h2>
-
-    <p>
-      Given this hopping-particle picture, it's very natural to ask: on average, how far has the
-      particle travelled? That's precisely what the <em>Krylov complexity</em> captures. It's
-      defined as the mean position of the particle in the Krylov chain,
-    </p>
-    \[
-    K(t) = \sum_n n\, |\phi_n(t)|^2.
-    \]
-    <p>
-      At \(t = 0\) the particle sits at site \(0\), so \(K(0) = 0\): the operator hasn't grown at
-      all yet. As time progresses and the wavefunction \(\phi_n(t)\) leaks into higher sites,
-      \(K(t)\) increases, quantifying how far the operator has spread through the Krylov basis, i.e.
-      how "complex" it has become. This is the sense in which \(K(t)\) earns the name Krylov
-      <em>complexity</em>: a genuinely simple operator (like \(O\) itself) sits at low \(n\), while
-      operators that have picked up increasingly intricate, nested-commutator structure sit at high
-      \(n\), and \(K(t)\) tracks the drift from one to the other. Such an object has turned out to
-      be a very useful diagnostic of the dynamics of the underlying problem. Particularly for
-      chaotic dynamics in \(d>1\), \(b_n \sim \alpha n\) and \(K(t) \sim \mathrm{e}^{2 \alpha t}\).
-      Indeed, this is indicative of how strongly scrambling chaotic dynamics can get.
-    </p>
-
-    <p>
-      As we come close to the end of this piece, let's quickly recap what we have seen till now. We
-      began by solving the Heisenberg equation of motion for an observable and saw that we could
-      express the solution as a linear combination of non-orthonormal operators that look like
-      \(\{O,\ \mathcal{L}O,\ \mathcal{L}^2O, ...\}\). We then orthonormalized this set to obtain the
-      Krylov basis \(\{|O_0), |O_1), ..., |O_{n - 1})\}\) with the defining relation
-      \(\mathcal{L}|O_n) = b_n |O_{n-1}) + b_{n+1}|O_{n+1})\) that also gave us the Krylov
-      coefficients \(\{b_n\}\). Expanding a general time evolved operator in this orthonormal
-      Krylov basis is useful because the time-dependent coefficients obey nice hopping dynamics,
-      with rates governed by \(\{b_n\}\). Lastly, we defined the mean position of the "hopping
-      particle" as the Krylov complexity. Higher moments also capture some dynamical information,
-      though we omit their discussion here.
-    </p>
-
-    <p>
-      Krylov methods in quantum dynamics bring deeper understanding beyond the standard paradigm of
-      analysis techniques. In the case of quantum chaos, it adds onto the list of other diagnostics
-      such as the Spectral Form Factor and Random Matrix Theory spectra. With its much more recent
-      extension to analyzing open quantum systems, it has only become a much more powerful tool.
-      Some recent work also explores Krylov complexity in the context of holography, but honestly I
-      don't understand it (yet!).
-    </p>
 
   </article>
 </main>
