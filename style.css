@@ -297,3 +297,17 @@ footer {
     height: 160px;
   }
 }
+
+.side-photo {
+  position: absolute;
+  top: 0;
+  left: 600px; /* sits just right of the 540px article + some breathing room */
+  width: 200px;
+  border-radius: 6px;
+}
+
+@media (max-width: 1000px) {
+  .side-photo {
+    display: none; /* hide on smaller screens where there's no room */
+  }
+}
