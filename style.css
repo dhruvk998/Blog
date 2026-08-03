@@ -277,8 +277,8 @@ footer {
 /* ── ABOUT PAGE PHOTO (sits to the right of the text) ── */
 .side-photo {
   position: absolute;
-  top: 120;
-  left: 700px;
+  top: 130;
+  left: 650px;
   width: 450px;
   border-radius: 6px;
 }
