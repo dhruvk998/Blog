@@ -63,6 +63,7 @@ nav {
   max-width: 960px;
   margin: 0 auto;
   padding: 0 2rem 6rem;
+  position: relative;
 }
 
 /* ── HOMEPAGE ── */
@@ -273,41 +274,17 @@ footer {
   text-align: center;
 }
 
-.about-flex {
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
-}
-
-.about-photo {
-  width: 130px;
-  height: 130px;
-  object-fit: cover;
-  border-radius: 6px;
-  flex-shrink: 0;
-}
-
-@media (max-width: 600px) {
-  .about-flex {
-    flex-direction: column;
-    align-items: center;
-  }
-  .about-photo {
-    width: 160px;
-    height: 160px;
-  }
-}
-
+/* ── ABOUT PAGE PHOTO (sits to the right of the text) ── */
 .side-photo {
   position: absolute;
   top: 0;
-  left: 600px; /* sits just right of the 540px article + some breathing room */
+  left: 600px;
   width: 200px;
   border-radius: 6px;
 }
 
 @media (max-width: 1000px) {
   .side-photo {
-    display: none; /* hide on smaller screens where there's no room */
+    display: none;
   }
 }
