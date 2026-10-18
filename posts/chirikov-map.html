@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chirikov, Nietzsche and Hamiltonian Chaos</title>
+  <link rel="stylesheet" href="../style.css">
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-title" href="../index.html">Aspects</a>
+    <div class="nav-links">
+      <a href="../index.html">Posts</a>
+      <a href="../about.html">About</a>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+
+  <!-- ── POST HEADER ── -->
+  <header class="post-header">
+    <p class="category">Hamiltonian Chaos</p>
+    <h1>Chirikov, Nietzsche and Hamiltonian Chaos</h1>
+    <p class="post-meta">
+      <span>3rd August 2025</span>
+      <span>5 min read</span>
+    </p>
+  </header>
+
+  <article class="post-body">
+
+    <p>
+      <em>“And if you gaze for long into an abyss, the abyss gazes also into you.”</em> ~ <em>Nietzsche</em>
+    </p>
+
+    <p>
+      It is not easy to find this particular abyss, but once you do, it stares hauntingly right back
+      at you, unblinking and obstinate. A surprised eye smack in the middle, holding your gaze as if
+      you don’t belong here. This is not a picture of outer space, nor is it a flow of some actual
+      fluid, but a far less obvious detail of a system you see everywhere all around you, and a
+      physicist’s dear friend — the simple pendulum.
+    </p>
+
+    <!-- ── INTERACTIVE PHASE PORTRAIT (replaces the opening image) ── -->
+    <figure class="post-video">
+      <canvas id="stdmap" width="640" height="640"
+        style="width:100%;max-width:520px;height:auto;display:block;margin:0 auto;border:1px solid var(--page-rule);border-radius:6px;background:#fff;"></canvas>
+      <div style="font-family:'DM Sans',sans-serif;font-size:14px;text-align:center;margin-top:0.8rem;color:var(--ink-soft);">
+        <label for="kslider">\(K = \)<span id="kval">1.20</span></label><br>
+        <input id="kslider" type="range" min="0" max="6" step="0.01" value="1.2"
+          style="width:min(320px,90%);accent-color:var(--accent);">
+      </div>
+      <figcaption>
+        The standard map: \(x\) runs from \(0\) to \(2\pi\) left to right and \(p\) from \(-\pi\) to \(\pi\)
+        bottom to top. Each colour is a single orbit. Drag the slider to change \(K\).
+      </figcaption>
+    </figure>
+
+    <p>
+      Story time! In the ’60s, Boris Chirikov was playing around with charges and magnets, and his
+      equations were decent looking. Naively, one would expect simple enough motion, but he was
+      astounded to see that his charges bounced around <em>almost randomly</em>. This was going to be
+      Chirikov’s first encounter with the untamed beast, we know as chaos.
+    </p>
+
+    <p>
+      Of course, any motion at this level is (in principle) guided by the laws of quantum mechanics
+      but it is not (in practice) very easily solved for because the math gets very complicated very
+      quickly. Chirikov speaks of ‘constructive physics’ where through experiments and simulations,
+      one <em>constructs</em> a relatively simple mathematical model. These models are technically
+      approximations, but at that time one could do worse by making <em>linear</em> approximations
+      (simple but uninteresting), as opposed to Chirikov who wished to make <em>nonlinear</em> models
+      (where all the fun lies). His monograph of ~240 pages kicked off a revolution in a field of
+      physics that technical people like to call <em>Hamiltonian Chaos</em>. JB Taylor and John Greene
+      are two other big names, with critical contributions to this field and particularly to this
+      problem. Without further ado, let’s <em>create</em> the abyss now, shall we?
+    </p>
+
+    <p>
+      Imagine you’re blind, drifting in the void of space, and you have a pendulum — suspended,
+      slightly deflected, but otherwise frozen in zero gravity. You also have a magical button. Each
+      time you press it, gravity switches on for the briefest instant. In that moment, the pendulum
+      jerks in response and your vision is restored just long enough to record its state: the angle
+      from vertical \(x\), and its momentum \(p\), both altered by that sudden gravitational nudge.
+      Then back to blindness.
+    </p>
+
+    <!-- Put your "button is pressed periodically, and this process loops back" diagram here, e.g.
+    <figure class="post-video">
+      <img src="../media/YOUR-DIAGRAM.png" alt="The button is pressed periodically" style="width:100%;height:auto;">
+      <figcaption>The button is pressed periodically, and this process loops back.</figcaption>
+    </figure>
+    -->
+
+    <p>
+      You keep pressing the button every \(T\) seconds, obsessively noting down the evolving values of
+      \((x, p)\) each time. Different initial conditions, different trajectories. Once you’ve collected
+      enough data and finally return to Earth, you plot all those points. If you’ve done it right, the
+      abyss shall open its eye to you.
+    </p>
+
+    <p>
+      Of course, this method is absolutely ridiculous, but I would like you to have the above picture
+      in mind when I say that our goal is to sample the pendulum’s state \((x, p)\) after every “kick”
+      and then create a phase portrait of its dynamics. Why? Because this process yields precisely the
+      equations Chirikov obtained when confining plasma in magnetic traps. For the ones dying to see
+      some math, here you go:
+    </p>
+
+    <p>A general Hamiltonian with periodic kicking looks like</p>
+    \[
+    H(x,p,t) = H_0(x,p) + V(x)\sum_{n=-\infty}^{\infty} \delta(t - nT).
+    \]
+
+    <p>By Hamilton’s equations,</p>
+    \[
+    \dot{x} = \frac{\partial H}{\partial p}, \qquad \dot{p} = -\frac{\partial H}{\partial x}.
+    \]
+
+    <p>For the pendulum,</p>
+    \[
+    H(x,p,t) = \frac{p^2}{2} + K_0 \cos x \sum_{n=-\infty}^{\infty} \delta(t - nT).
+    \]
+
+    <p>
+      The next part of “sampling” this continuous time system to
+      <span class="thm" data-proof="kick-derivation">arrive at a discrete time system</span><span class="thm-marker">▸</span>
+      is tricky, and will need a little more analysis but effectively, one arrives at the following
+      (after rescaling):
+    </p>
+    \[
+    \begin{aligned}
+    p_{n+1} &= p_n + K \sin x_n, \\
+    x_{n+1} &= x_n + p_{n+1}.
+    \end{aligned}
+    \]
+
+    <div class="proof" id="proof-kick-derivation">
+      <div class="proof-inner"><div class="proof-content">
+        <div class="proof-label">From the kicked pendulum to the map <span class="close" data-close="kick-derivation">close ✕</span></div>
+        <p>
+          Between kicks the delta functions vanish, so \(H = p^2/2\) and Hamilton’s equations give
+          \(\dot p = 0\), \(\dot x = p\): the pendulum simply drifts at constant momentum. At a kick,
+          \(t = nT\), we have
+        </p>
+        \[
+        \dot p = -\frac{\partial H}{\partial x} = K_0 \sin x \; \delta(t - nT),
+        \]
+        <p>
+          while \(\dot x = p\) stays finite, so \(x\) does not jump across the kick (the kick is
+          instantaneous) but \(p\) does. Integrating \(\dot p\) across the kick gives a jump
+          \(\Delta p = K_0 \sin x\).
+        </p>
+        <p>
+          Sample the state \((x_n, p_n)\) just before the \(n\)th kick. The kick changes the momentum,
+          and then the pendulum drifts for a time \(T\):
+        </p>
+        \[
+        p_{n+1} = p_n + K_0 \sin x_n, \qquad x_{n+1} = x_n + T\,p_{n+1}.
+        \]
+        <p>
+          Now rescale the momentum, \(P_n = T p_n\), and define \(K = K_0 T\). Multiplying the first
+          equation by \(T\) gives
+        </p>
+        \[
+        P_{n+1} = P_n + K \sin x_n, \qquad x_{n+1} = x_n + P_{n+1},
+        \]
+        <p>
+          which is the map above, with \(P\) renamed \(p\). The three constants \(K_0\), \(T\) and the
+          pendulum’s normalisation have collapsed into the single number \(K = K_0 T\), which is why
+          only one parameter controls everything. Since \(x\) is an angle it is taken mod \(2\pi\).
+          Sampling just <em>after</em> each kick instead gives the same equations in the opposite
+          order, which is one of the equivalent forms mentioned below.
+        </p>
+      </div></div>
+    </div>
+
+    <p>
+      This <em>map,</em> takes input as the angle and momentum after the \(n\)th kick, and maps this to
+      some output angle and momentum after the \((n+1)\)th kick. It is famously known as the
+      <em>standard</em> map, or <em>Chirikov</em> map, or <em>Chirikov-Taylor-Greene</em> map. I would
+      like to bring to your attention several important observations:
+    </p>
+
+    <ol style="margin: 0 0 1.4rem 1.6rem;">
+      <li style="margin-bottom:0.5rem;">
+        The order in which I wrote the equations matters, and you may see different signs or variables
+        anywhere else but all these equations are topologically <em>same</em> and contain the
+        <em>same</em> dynamics.
+      </li>
+      <li style="margin-bottom:0.5rem;">
+        Only one parameter \(K\) controls all dynamical behaviour.
+      </li>
+      <li>
+        Since these equations were derived from a Hamiltonian, the dynamics obeys Liouville’s theorem
+        and the Jacobian \(J\) obeys
+        <span class="thm" data-proof="jacobian">\(\det J = 1\)</span><span class="thm-marker">▸</span>
+        (try it!).
+      </li>
+    </ol>
+
+    <div class="proof" id="proof-jacobian">
+      <div class="proof-inner"><div class="proof-content">
+        <div class="proof-label">The Jacobian has unit determinant <span class="close" data-close="jacobian">close ✕</span></div>
+        <p>
+          Write the map as \(x' = x + p'\), \(p' = p + K\sin x\). The partial derivatives are
+          \(\partial p'/\partial x = K\cos x\), \(\partial p'/\partial p = 1\),
+          \(\partial x'/\partial x = 1 + K\cos x\) and \(\partial x'/\partial p = 1\), so
+        </p>
+        \[
+        J = \frac{\partial (x', p')}{\partial (x, p)} =
+        \begin{pmatrix} 1 + K\cos x & 1 \\ K\cos x & 1 \end{pmatrix},
+        \qquad
+        \det J = (1 + K\cos x) - K\cos x = 1.
+        \]
+        <p>
+          Equivalently, the map is a composition of two shears, a kick and a drift, each with unit
+          determinant:
+        </p>
+        \[
+        J = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}
+            \begin{pmatrix} 1 & 0 \\ K\cos x & 1 \end{pmatrix}.
+        \]
+        <p>
+          \(\det J = 1\) means the map preserves area in the \((x,p)\) plane. This is the discrete-time
+          version of Liouville’s theorem: phase-space blobs can be stretched and folded, but never
+          compressed.
+        </p>
+      </div></div>
+    </div>
+
+    <p>
+      So what really are these “eyes” in the phase space? They represent
+      <span class="thm" data-proof="fixed-points">islands</span><span class="thm-marker">▸</span>
+      of <em>quasiperiodic</em> (almost periodic) motion, spread out in a sea of chaos where the
+      motion seems erratic and appears as almost randomly distributed points. It was exactly this
+      motion Chirikov observed! For small \(K\) (weak kicking), the phase space maintains most of its
+      regularity, but for
+      <span class="thm" data-proof="chaos-onset">large enough \(K\)</span><span class="thm-marker">▸</span>
+      (strong kicking), chaos takes over. The interactive plot at the top of this page shows the same:
+      drag the slider and watch the eye open and close.
+    </p>
+    <!-- To use your own animation instead of the plot above, add:
+    <figure class="post-video">
+      <video controls muted loop playsinline>
+        <source src="../media/YOUR-VIDEO.mp4" type="video/mp4">
+      </video>
+    </figure>
+    -->
+
+    <div class="proof" id="proof-fixed-points">
+      <div class="proof-inner"><div class="proof-content">
+        <div class="proof-label">Where the eye comes from <span class="close" data-close="fixed-points">close ✕</span></div>
+        <p>
+          Take \(x\) and \(p\) mod \(2\pi\). A fixed point needs \(x_{n+1} = x_n\), which forces
+          \(p_{n+1} \equiv 0\), and \(p_{n+1} = p_n\), which forces \(K\sin x_n \equiv 0\). Taking
+          \(p = 0\) this leaves \(\sin x = 0\), so the fixed points are \((x,p) = (0,0)\) and
+          \((\pi,0)\).
+        </p>
+        <p>
+          Linearising about a fixed point, small deviations evolve with the Jacobian from before.
+          Since \(\det J = 1\), its eigenvalues obey \(\lambda^2 - (\mathrm{tr}\,J)\lambda + 1 = 0\), with
+        </p>
+        \[
+        \mathrm{tr}\,J = 2 + K\cos x.
+        \]
+        <p>
+          At \((0,0)\), \(\mathrm{tr}\,J = 2 + K > 2\) for \(K>0\): the eigenvalues are real, one
+          larger than \(1\) and one smaller, so nearby points are stretched along one direction and
+          squeezed along the other. This hyperbolic point is unstable, and it is where chaos is born.
+        </p>
+        <p>
+          At \((\pi,0)\), \(\mathrm{tr}\,J = 2 - K\). For \(0 < K < 4\) we have \(|\mathrm{tr}\,J| < 2\),
+          so the eigenvalues are complex phases \(e^{\pm i\theta}\) with \(\cos\theta = 1 - K/2\).
+          Nearby orbits rotate around the fixed point instead of leaving it: this is the elliptic
+          point at the centre of the “eye”, surrounded by quasiperiodic orbits. At \(K = 4\) the trace
+          reaches \(-2\) and this point loses its linear stability. (Showing that the surrounding
+          curves really survive the nonlinearity needs KAM theory; the linearisation only tells you
+          where to look.)
+        </p>
+      </div></div>
+    </div>
+
+    <div class="proof" id="proof-chaos-onset">
+      <div class="proof-inner"><div class="proof-content">
+        <div class="proof-label">How chaos takes over <span class="close" data-close="chaos-onset">close ✕</span></div>
+        <p>
+          At \(K = 0\) the map is \(p_{n+1} = p_n\), \(x_{n+1} = x_n + p_n\). Momentum never changes,
+          so every orbit lies on a horizontal line \(p = \text{const}\). If \(p/2\pi\) is rational the
+          orbit is periodic, and if it is irrational the orbit fills the line densely: quasiperiodic
+          motion, with no chaos at all.
+        </p>
+        <p>
+          For small \(K > 0\), the Kolmogorov–Arnold–Moser (KAM) theorem says most of these irrational
+          lines survive, only slightly deformed. The rational ones are destroyed and replaced by chains
+          of islands, with a thin chaotic layer around the hyperbolic points. As \(K\) grows, the
+          islands widen, the chaotic layers thicken and begin to merge.
+        </p>
+        <p>
+          A sharp threshold is the destruction of the last invariant curve that runs across the whole
+          \(x\) range, the one with golden-mean rotation number. Numerically (Greene’s residue
+          criterion) this happens at \(K_c \approx 0.9716\). Beyond \(K_c\) no such curve remains to
+          confine the momentum, so a single chaotic orbit can wander over a large range of \(p\). You
+          can see the change by sweeping the slider through \(K \approx 1\) in the plot above.
+        </p>
+      </div></div>
+    </div>
+
+    <p>
+      There is a lot more hidden structure, and I haven’t even scratched the surface yet. Indeed, I’m
+      not a master of the field, but I couldn’t help but share this brilliant piece of physics with
+      you. Chaotic maps such as the standard map go deep, but are still classical. It turns out that
+      you can bring in quantum mechanics and have <em>quantum chaos,</em> as if the two were simple
+      enough separately! But quantum chaos is an active field of research and has direct applications
+      in quantum computing. Hopefully, it will become a subject I get to delve into soon.
+    </p>
+
+    <p>
+      Thanks for sticking till the end! If you’re interested in reading more, here are some references
+      I used:
+    </p>
+
+    <ol style="margin: 0 0 1.4rem 1.6rem;">
+      <li style="margin-bottom:0.5rem;">
+        Succinctly written
+        <a href="https://www.icts.res.in/sites/default/files/bssp2018-Arul-Lakshminarayan-slides.pdf">lecture notes</a>
+        by Prof. Arul Lakshminarayan for the Bangalore Summer School on Statistical Physics, 9–13 July
+        2018 at ICTS, Bangalore.
+      </li>
+      <li>
+        Chirikov’s original monograph,
+        <a href="https://cds.cern.ch/record/325497?ln=en"><em>Research concerning the theory of non-linear resonance and stochasticity</em></a>.
+      </li>
+    </ol>
+
+    <p>
+      For a more hands-on approach,
+      <a href="https://colab.research.google.com/drive/1kCX3gbt7DYIkpP6xwAQ1MCWbhmDOoyut?usp=sharing">here is a Jupyter notebook</a>
+      where I will be soon putting up more examples of such unique maps!
+    </p>
+
+    <p>
+      <a href="https://medium.com/@dhruv.kaushik998/chirikov-nietzsche-and-hamiltonian-chaos-3ce8e5b0b5ff">Originally published on Medium</a>
+    </p>
+
+  </article>
+</main>
+
+<footer>
+   Hosted on GitHub Pages
+</footer>
+
+<!-- ── Standard map phase portrait ── -->
+<script>
+(function () {
+  var canvas = document.getElementById('stdmap');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  var TAU = 2 * Math.PI;
+  var slider = document.getElementById('kslider');
+  var kval = document.getElementById('kval');
+
+  // small deterministic PRNG so the picture is the same on every load
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  var rand = mulberry32(7);
+
+  // initial conditions: a line through the centre of the eye plus random points
+  var seeds = [];
+  var i;
+  for (i = 0; i < 24; i++) seeds.push([Math.PI, -Math.PI + (i + 0.5) * TAU / 24]);
+  for (i = 0; i < 40; i++) seeds.push([rand() * TAU, (rand() - 0.5) * TAU]);
+
+  function draw() {
+    var K = parseFloat(slider.value);
+    kval.textContent = K.toFixed(2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+    for (var s = 0; s < seeds.length; s++) {
+      var x = seeds[s][0], p = seeds[s][1];
+      ctx.fillStyle = 'hsl(' + ((s * 137.5) % 360) + ',65%,40%)';
+      for (var n = 0; n < 800; n++) {
+        p = p + K * Math.sin(x);
+        x = x + p;
+        x = x - TAU * Math.floor(x / TAU);
+        p = p - TAU * Math.floor((p + Math.PI) / TAU);
+        ctx.fillRect((x / TAU) * W, (1 - (p + Math.PI) / TAU) * H, 1.6, 1.6);
+      }
+    }
+  }
+
+  slider.addEventListener('input', draw);
+  draw();
+})();
+</script>
+<script src="../proofs.js"></script>
+</body>
+</html>
